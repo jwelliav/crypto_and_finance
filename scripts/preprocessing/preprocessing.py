@@ -29,7 +29,11 @@ def load_df(path):
     output :
            df - convert csv to df and counts the total NaN in the dataframe. 
     """
-    df = pd.read_csv(path)
+    if path.endswith('csv'):
+        df = pd.read_csv(path)
+    elif path.endswith('parquet'):
+         df = pd.read_parquet(path) 
+        
     df.columns = ['timestamp','open','high','low','close','volume']
     df['date'] = pd.to_datetime(df['timestamp'], unit = 'ms')
     df = df.set_index(pd.DatetimeIndex(df['date']))
@@ -38,6 +42,7 @@ def load_df(path):
     print('Total NaN : ' + "\n")
     print(df.isna().sum())
     print('')
+    df = df.drop_duplicates(subset = 'timestamp')
     return(df)
 
 
